@@ -1,0 +1,71 @@
+Private Sub Search_Click()
+    Dim SummarySheet As Worksheet
+    Dim Criteria As String
+    Dim CRow As Long
+    Dim FolderPath As String
+    Dim NRow As Long
+    Dim FileName As String
+    Dim SourceRange As Range
+    Dim DestRange As Range
+    Dim WorkBk As Workbook
+    
+    'define SummarySheet
+    Set SummarySheet = ThisWorkbook.ActiveSheet
+    
+    'clear destination cells
+    SummarySheet.Range("a4:b10").Clear
+    
+    'define the criteria of the search
+    Criteria = Range("b1").Value
+    
+    'Path to the files you need to search
+    FolderPath = "C:\Users\Desktop\Test Folder\Test Items\"
+    
+    'Keep track of the destination rows
+    NRow = 1
+    
+    'Retrieve source data
+    FileName = Dir(FolderPath & "*.xl*")
+    
+    Do While FileName <> ""
+    
+        'search criteria rows
+        CRow = 1
+        
+        
+        Set WorkBk = Workbooks.Open(FolderPath & FileName)
+        
+        'retrieve location
+        SummarySheet.Range("A" & NRow + 3).Value = WorkBk.Worksheets(1).Range("A1:a1")
+        
+        'set source range
+        Set SourceRange = WorkBk.Worksheets(1).Range("g" & CRow + 3)
+        
+        'set destination range
+        Set DestRange = SummarySheet.Range("B" & NRow + 3)
+        Set DestRange = DestRange.Resize(SourceRange.Rows.Count, SourceRange.Columns.Count)
+        
+        Do Until IsEmpty(WorkBk.Worksheets(1).Range("a" & CRow + 3))
+            If WorkBk.Worksheets(1).Range("a" & CRow + 3) = Criteria Then
+            
+                'copy values
+                DestRange.Value = SourceRange.Value
+        
+                'increase Nrow count
+                NRow = NRow + DestRange.Rows.Count
+            End If
+            
+         CRow = CRow + 1
+         
+        Loop
+        
+        'close sources
+        WorkBk.Close savechanges:=False
+        
+        FileName = Dir()
+    Loop
+    
+    SummarySheet.Columns.AutoFit
+    
+    
+End Sub

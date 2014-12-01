@@ -1,4 +1,4 @@
-Private Sub Search_Click()
+Private Sub Countermeasure()
     Dim SummarySheet As Worksheet
     Dim Criteria As String
     Dim CRow As Long
@@ -13,13 +13,13 @@ Private Sub Search_Click()
     Set SummarySheet = ThisWorkbook.ActiveSheet
     
     'clear destination cells
-    SummarySheet.Range("a4:b10").Clear
+    SummarySheet.Range("7:" & Rows.Count - 6).ClearContents
     
     'define the criteria of the search
-    Criteria = Range("b1").Value
+    Criteria = Range("C2").Value
     
     'Path to the files you need to search
-    FolderPath = "C:\Users\Desktop\Test Folder\Test Items\"
+    FolderPath = "T:\T_E_FILES\LivableStreets\2.0 Analysis & Coordination\Projects\Ped Safety Dir\WalkFirst Invest Strat\Work Tasks\Element Tracking\For WET Testing\"
     
     'Keep track of the destination rows
     NRow = 1
@@ -31,31 +31,34 @@ Private Sub Search_Click()
     
         'search criteria rows
         CRow = 1
-        
+        N = 17
         
         Set WorkBk = Workbooks.Open(FolderPath & FileName)
         
-        'retrieve location
-        SummarySheet.Range("A" & NRow + 3).Value = WorkBk.Worksheets(1).Range("A1:a1")
+        'retrieve location text
+        SummarySheet.Range("B" & NRow + 6).Value = WorkBk.Worksheets(1).Range("C4:C4")
         
         'set source range
-        Set SourceRange = WorkBk.Worksheets(1).Range("g" & CRow + 3)
+        'Set SourceRange = WorkBk.Worksheets(1).Range("g" & CRow + 3)
         
         'set destination range
-        Set DestRange = SummarySheet.Range("B" & NRow + 3)
-        Set DestRange = DestRange.Resize(SourceRange.Rows.Count, SourceRange.Columns.Count)
+        Set DestRange = SummarySheet.Range("C" & NRow + 6)
+        'Set DestRange = DestRange.Resize(SourceRange.Rows.Count, SourceRange.Columns.Count)
         
-        Do Until IsEmpty(WorkBk.Worksheets(1).Range("a" & CRow + 3))
-            If WorkBk.Worksheets(1).Range("a" & CRow + 3) = Criteria Then
+        Do Until IsEmpty(WorkBk.Worksheets(1).Range("B" & CRow + 17))
+            If WorkBk.Worksheets(1).Range("B" & CRow + 17) = Criteria Then
             
                 'copy values
-                DestRange.Value = SourceRange.Value
+                DestRange.Value = WorkBk.Worksheets(1).Range("H" & CRow + N)
         
                 'increase Nrow count
                 NRow = NRow + DestRange.Rows.Count
+            
+                N = N + 1
+                
             End If
             
-         CRow = CRow + 1
+                CRow = CRow + 1
          
         Loop
         
@@ -65,7 +68,7 @@ Private Sub Search_Click()
         FileName = Dir()
     Loop
     
-    SummarySheet.Columns.AutoFit
+    'SummarySheet.Columns.AutoFit
     
     
 End Sub
